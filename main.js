@@ -1,3 +1,18 @@
+// Check Maintenance Mode
+if (localStorage.getItem('maintenance') === 'true' && !window.location.href.includes('admin.html')) {
+    document.body.innerHTML = `
+        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; color: #fff; text-align: center; font-family: 'Inter', sans-serif;">
+            <h1 style="font-size: 4rem; color: #E31B23; margin-bottom: 20px;">Maintenance Mode</h1>
+            <p style="font-size: 1.5rem; color: #a0a0a0;">We're currently updating Vxlancity DEV Portfolio. Be right back!</p>
+            <div style="margin-top: 40px; width: 100px; height: 4px; background: #E31B23; animation: pulse 2s infinite;"></div>
+            <style>
+                @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+            </style>
+        </div>
+    `;
+    throw new Error("Maintenance Mode Active");
+}
+
 // Initialize Lenis Smooth Scroll
 const lenis = new Lenis({
     duration: 1.2,
@@ -113,6 +128,28 @@ appleRevealTl
 // Section Reveal Animations
 const sections = document.querySelectorAll('.container');
 
+// Load Projects from LocalStorage or Defaults
+function loadProjects() {
+    const projectGrid = document.querySelector('.project-grid');
+    const storedProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+    
+    if (storedProjects.length > 0) {
+        projectGrid.innerHTML = storedProjects.map((p, index) => `
+            <div class="project-card">
+                <div class="project-image" style="background: #111;"></div>
+                <div class="project-info">
+                    <h3>${p.title}</h3>
+                    <p>${p.desc}</p>
+                    <div class="project-tags">
+                        ${p.tags.map(tag => `<span>${tag}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+loadProjects();
+
 sections.forEach(section => {
     gsap.from(section.querySelectorAll('.section-title, .title-line, .about-text, .tech-card, .project-card, .contact-box'), {
         scrollTrigger: {
@@ -127,6 +164,54 @@ sections.forEach(section => {
         ease: 'power3.out'
     });
 });
+
+// Contact Form Discord Integration
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const webhook = localStorage.getItem('webhook');
+        if (!webhook) {
+            alert('Formular gesendet! (Tipp: Im Admin-Bereich kann eine Discord Webhook hinterlegt werden)');
+            return;
+        }
+
+        const formData = {
+            name: contactForm.querySelector('input[type="text"]').value,
+            email: contactForm.querySelector('input[type="email"]').value,
+            message: contactForm.querySelector('textarea').value
+        };
+
+        try {
+            const response = await fetch(webhook, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: 'New Contact Form Submission',
+                        color: 0xE31B23,
+                        fields: [
+                            { name: 'Name', value: formData.name },
+                            { name: 'Email', value: formData.email },
+                            { name: 'Message', value: formData.message }
+                        ],
+                        footer: { text: 'Vxlancity Portfolio' }
+                    }]
+                })
+            });
+
+            if (response.ok) {
+                alert('Nachricht erfolgreich gesendet!');
+                contactForm.reset();
+            } else {
+                alert('Fehler beim Senden.');
+            }
+        } catch (error) {
+            console.error('Error sending to Discord:', error);
+            alert('Fehler beim Senden an Discord.');
+        }
+    });
+}
 
 // Magnetic effect on tech cards (Bonus)
 document.querySelectorAll('.tech-card').forEach(card => {
@@ -152,3 +237,4 @@ document.querySelectorAll('.tech-card').forEach(card => {
         });
     });
 });
+

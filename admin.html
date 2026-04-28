@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Vxlancity</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+        }
+        .admin-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-section {
+            margin-bottom: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px; width: 26px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .project-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .project-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .project-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-overlay">
+        <div class="contact-box">
+            <h2>Admin Access</h2>
+            <input type="password" id="admin-pass" placeholder="Password (default: admin123)">
+            <button class="btn-primary" onclick="checkPass()">Login</button>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <a href="index.html" class="btn-primary">Back to Site</a>
+        </div>
+
+        <div class="admin-section">
+            <h2>Maintenance Mode</h2>
+            <p>Toggle this to show a maintenance page to visitors.</p>
+            <label class="toggle-switch">
+                <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenance()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="admin-section">
+            <h2>Discord Webhook</h2>
+            <p>Enter your Discord Webhook URL for contact notifications.</p>
+            <input type="text" id="webhook-url" placeholder="https://discord.com/api/webhooks/..." onchange="saveWebhook()">
+        </div>
+
+        <div class="admin-section">
+            <h2>Projects</h2>
+            <form class="project-form" onsubmit="addProject(event)">
+                <input type="text" id="proj-title" placeholder="Project Title" required>
+                <input type="text" id="proj-desc" placeholder="Short Description" required>
+                <input type="text" id="proj-tags" placeholder="Tags (comma separated)">
+                <button type="submit" class="btn-primary">Add Project</button>
+            </form>
+            <div class="project-list" id="project-list"></div>
+        </div>
+    </div>
+
+    <script>
+        function checkPass() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === 'admin123') {
+                document.getElementById('login-overlay').style.display = 'none';
+                loadSettings();
+            } else {
+                alert('Wrong password!');
+            }
+        }
+
+        function loadSettings() {
+            document.getElementById('maintenance-toggle').checked = localStorage.getItem('maintenance') === 'true';
+            document.getElementById('webhook-url').value = localStorage.getItem('webhook') || '';
+            renderProjects();
+        }
+
+        function toggleMaintenance() {
+            const val = document.getElementById('maintenance-toggle').checked;
+            localStorage.setItem('maintenance', val);
+        }
+
+        function saveWebhook() {
+            const val = document.getElementById('webhook-url').value;
+            localStorage.setItem('webhook', val);
+        }
+
+        function addProject(e) {
+            e.preventDefault();
+            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            const newProj = {
+                id: Date.now(),
+                title: document.getElementById('proj-title').value,
+                desc: document.getElementById('proj-desc').value,
+                tags: document.getElementById('proj-tags').value.split(',').map(t => t.trim())
+            };
+            projects.push(newProj);
+            localStorage.setItem('projects', JSON.stringify(projects));
+            renderProjects();
+            e.target.reset();
+        }
+
+        function deleteProject(id) {
+            let projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            projects = projects.filter(p => p.id !== id);
+            localStorage.setItem('projects', JSON.stringify(projects));
+            renderProjects();
+        }
+
+        function renderProjects() {
+            const list = document.getElementById('project-list');
+            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            list.innerHTML = projects.map(p => `
+                <div class="project-item">
+                    <span>${p.title}</span>
+                    <button class="delete-btn" onclick="deleteProject(${p.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
