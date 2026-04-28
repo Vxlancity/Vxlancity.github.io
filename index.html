@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vxlancity DEV | Portfolio</title>
-    <meta name="description" content="Portfolio von Vxlancity DEV - Full-Stack Entwickler & Designer. Entdecke meine Projekte und Skills.">
-    
+    <meta name="description"
+        content="Portfolio von Vxlancity DEV - Full-Stack Entwickler & Designer. Entdecke meine Projekte und Skills.">
+
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Damion&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
-    
+
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="custom-cursor">
     <!-- Custom Cursor -->
     <div id="cursor"></div>
@@ -50,7 +53,9 @@
 <pre><code><span class="code-keyword">const</span> <span class="code-function">developer</span> = {
     name: <span class="code-string">"Vxlancity"</span>,
     role: <span class="code-string">"Full Stack Dev"</span>,
-    status: <span class="code-string">"Coding"</span>
+    socials: [
+        <span id="terminal-social-container"></span>
+    ]
 };
 <span class="code-comment">// Let's build something amazing</span>
 <span class="code-function">init</span>(developer);</code></pre>
@@ -89,17 +94,21 @@
 
         <!-- About Section -->
         <section id="about" class="container">
-            <div class="section-header">
-                <h2 class="section-title">About Me</h2>
-                <div class="title-line"></div>
-            </div>
             <div class="about-grid">
-                <div class="about-text">
-                    <p>Ich bin ein leidenschaftlicher Entwickler mit Fokus auf moderne Web-Technologien und außergewöhnliche User Experiences.</p>
-                    <p>In meiner Arbeit verschmelzen Ästhetik und Performance zu einer einzigartigen digitalen Erfahrung.</p>
+                <div class="about-left">
+                    <div class="section-header" style="margin-bottom: 30px;">
+                        <h2 class="section-title">About Me</h2>
+                        <div class="title-line"></div>
+                    </div>
+                    <div class="about-text">
+                    <p class="reveal-text">I'm a passionate developer focused on building high-performance, aesthetically pleasing digital experiences. With expertise in full-stack development and a keen eye for modern design trends, I transform complex ideas into elegant solutions.</p>
+                    <div id="discord-widget" class="discord-widget" style="display: none;"></div>
+                </div>        <br>
+                        <p>In meiner Arbeit verschmelzen Ästhetik und Performance zu einer einzigartigen digitalen Erfahrung.</p>
+                    </div>
                 </div>
                 <div class="tech-stack">
-                    <h3>Tech Stack</h3>
+                    <h3>TECH STACK</h3>
                     <div class="tech-icons">
                         <div class="tech-card"><i class="devicon-java-plain colored"></i> Java</div>
                         <div class="tech-card"><i class="devicon-javascript-plain colored"></i> JavaScript</div>
@@ -126,25 +135,31 @@
                 <div class="title-line"></div>
             </div>
             <div class="project-grid">
-                <!-- Project Card 1 -->
+                <!-- Project Card 1: Aera Craft -->
                 <div class="project-card">
-                    <div class="project-image" style="background-image: url('assets/project1.png'); background-size: cover; background-position: center;"></div>
+                    <div class="project-image-wrapper">
+                        <div class="project-badge">Projekt Idee (2026)</div>
+                        <div class="project-image" style="background-image: url('https://images.unsplash.com/photo-1607513746994-51f730a44832?q=80&w=1000&auto=format&fit=crop');"></div>
+                    </div>
                     <div class="project-info">
-                        <h3>Project One</h3>
-                        <p>A high-end web application with seamless animations.</p>
+                        <h3>Aera Craft</h3>
+                        <p>Ein evolutionäres Minecraft-Konzept: Vier Wochen, vier Epochen. Vom primitiven Steinzeit-Survival bis zum hochtechnologisierten Fraktionskrieg. Aus gemeinsamem Aufbau wird eine erbarmungslose Schlacht um die Vorherrschaft. Wer am Ende die Festung hält, wird zur Server-Legende.</p>
                         <div class="project-tags">
-                            <span>React</span>
-                            <span>GSAP</span>
+                            <span>Minecraft</span>
+                            <span>Java</span>
+                            <span>Game Design</span>
                         </div>
-                        <a href="#" class="project-link" target="_blank">Visit Website ↗</a>
+                        <a href="#" class="project-link" target="_blank">View Concept ↗</a>
                     </div>
                 </div>
                 <!-- Project Card 2 -->
                 <div class="project-card">
-                    <div class="project-image" style="background-image: url('assets/project2.png'); background-size: cover; background-position: center;"></div>
+                    <div class="project-image-wrapper">
+                        <div class="project-image" style="background-image: url('assets/project2.png');"></div>
+                    </div>
                     <div class="project-info">
-                        <h3>Project Two</h3>
-                        <p>Modern E-Commerce platform with Apple-style interactions.</p>
+                        <h3>Vxlancity Store</h3>
+                        <p>Modern E-Commerce platform with Apple-style interactions, glassmorphism UI, and lightning fast checkout flow.</p>
                         <div class="project-tags">
                             <span>Next.js</span>
                             <span>Tailwind</span>
@@ -178,10 +193,7 @@
     <footer>
         <div class="footer-content">
             <p>&copy; 2026 Vxlancity DEV. All rights reserved.</p>
-            <div class="socials">
-                <a href="#">GitHub</a>
-                <a href="#">Discord</a>
-                <a href="#">Twitter</a>
+            <div class="socials" id="footer-social-container">
             </div>
         </div>
     </footer>
@@ -192,4 +204,5 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
     <script src="main.js"></script>
 </body>
+
 </html>

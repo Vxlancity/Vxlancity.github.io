@@ -122,13 +122,36 @@
         </div>
 
         <div class="admin-section">
+            <h2>Terminal Social Links</h2>
+            <p>Enter your social media links (comma separated) for the Hero Terminal. Icons are added automatically.</p>
+            <input type="text" id="terminal-socials" placeholder="e.g. https://github.com/vxlancity, https://discord.gg/..." style="width: 100%; max-width: 400px; padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.2); color: #fff; margin-bottom: 10px;">
+            <button class="btn-primary" onclick="saveTerminalSocials()">Save Terminal Socials</button>
+        </div>
+
+        <div class="admin-section">
+            <h2>Footer Social Links</h2>
+            <p>Enter your social media links for the website footer.</p>
+            <input type="text" id="footer-socials" placeholder="e.g. https://twitter.com/vxlancity, https://youtube.com/..." style="width: 100%; max-width: 400px; padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.2); color: #fff; margin-bottom: 10px;">
+            <button class="btn-primary" onclick="saveFooterSocials()">Save Footer Socials</button>
+        </div>
+
+        <div class="admin-section">
+            <h2>Discord Live Presence</h2>
+            <p>Enter your Discord User ID to show your live activity via Lanyard.</p>
+            <input type="text" id="discord-userid" placeholder="e.g. 123456789012345678" style="width: 100%; max-width: 400px; padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.2); color: #fff; margin-bottom: 10px;">
+            <button class="btn-primary" onclick="saveDiscordId()">Save User ID</button>
+            <p style="font-size: 0.8rem; color: var(--muted-color); margin-top: 10px;">Note: You must be in the <a href="https://discord.gg/lanyard" target="_blank" style="color:var(--accent-color)">Lanyard Discord server</a> for this to work.</p>
+        </div>
+
+        <div class="admin-section">
             <h2>Projects</h2>
             <form class="project-form" onsubmit="addProject(event)">
                 <input type="text" id="proj-title" placeholder="Project Title" required>
                 <input type="text" id="proj-desc" placeholder="Short Description" required>
                 <input type="text" id="proj-tags" placeholder="Tags (comma separated)">
                 <input type="text" id="proj-image" placeholder="Image URL (z.B. assets/project1.png)" required>
-                <input type="text" id="proj-url" placeholder="Website URL (https://...)" required>
+                <input type="text" id="proj-links" placeholder="Project Links (comma separated, z.B. https://discord.gg/..., https://github.com/...)">
+                <input type="text" id="proj-badge" placeholder="Badge Text (Optional, z.B. Projekt Idee 2026)">
                 <button type="submit" class="btn-primary">Add Project</button>
             </form>
             <div class="project-list" id="project-list"></div>
@@ -149,6 +172,9 @@
         function loadSettings() {
             document.getElementById('maintenance-toggle').checked = localStorage.getItem('maintenance') === 'true';
             document.getElementById('webhook-url').value = localStorage.getItem('webhook') || '';
+            document.getElementById('terminal-socials').value = localStorage.getItem('terminal-socials') || 'https://github.com/vxlancity, https://discord.gg/yourserver';
+            document.getElementById('footer-socials').value = localStorage.getItem('footer-socials') || 'https://github.com/vxlancity';
+            document.getElementById('discord-userid').value = localStorage.getItem('discord-userid') || '';
             renderProjects();
         }
 
@@ -162,21 +188,67 @@
             localStorage.setItem('webhook', val);
         }
 
+        function saveTerminalSocials() {
+            const val = document.getElementById('terminal-socials').value;
+            localStorage.setItem('terminal-socials', val);
+            alert('Terminal Socials saved!');
+        }
+
+        function saveFooterSocials() {
+            const val = document.getElementById('footer-socials').value;
+            localStorage.setItem('footer-socials', val);
+            alert('Footer Socials saved!');
+        }
+
+        function saveDiscordId() {
+            const val = document.getElementById('discord-userid').value;
+            localStorage.setItem('discord-userid', val);
+            alert('Discord ID saved!');
+        }
+
+        let editingProjectId = null;
+
         function addProject(e) {
             e.preventDefault();
             const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-            const newProj = {
-                id: Date.now(),
+            const projData = {
+                id: editingProjectId ? editingProjectId : Date.now(),
                 title: document.getElementById('proj-title').value,
                 desc: document.getElementById('proj-desc').value,
                 tags: document.getElementById('proj-tags').value.split(',').map(t => t.trim()),
                 image: document.getElementById('proj-image').value,
-                url: document.getElementById('proj-url').value
+                badge: document.getElementById('proj-badge').value,
+                links: document.getElementById('proj-links').value.split(',').map(l => l.trim()).filter(l => l)
             };
-            projects.push(newProj);
+            
+            if (editingProjectId) {
+                const index = projects.findIndex(p => p.id === editingProjectId);
+                if (index > -1) projects[index] = projData;
+                editingProjectId = null;
+                document.querySelector('.project-form button').textContent = 'Add Project';
+            } else {
+                projects.push(projData);
+            }
+            
             localStorage.setItem('projects', JSON.stringify(projects));
             renderProjects();
             e.target.reset();
+        }
+
+        function editProject(id) {
+            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            const p = projects.find(proj => proj.id === id);
+            if (!p) return;
+            
+            document.getElementById('proj-title').value = p.title;
+            document.getElementById('proj-desc').value = p.desc;
+            document.getElementById('proj-tags').value = (p.tags || []).join(', ');
+            document.getElementById('proj-image').value = p.image || '';
+            document.getElementById('proj-badge').value = p.badge || '';
+            document.getElementById('proj-links').value = (p.links || []).join(', ');
+            
+            editingProjectId = id;
+            document.querySelector('.project-form button').textContent = 'Update Project';
         }
 
         function deleteProject(id) {
@@ -192,7 +264,10 @@
             list.innerHTML = projects.map(p => `
                 <div class="project-item">
                     <span>${p.title}</span>
-                    <button class="delete-btn" onclick="deleteProject(${p.id})">Delete</button>
+                    <div>
+                        <button class="btn-primary" style="padding: 5px 10px; margin-right: 10px; background: transparent; border: 1px solid var(--accent-color);" onclick="editProject(${p.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteProject(${p.id})">Delete</button>
+                    </div>
                 </div>
             `).join('');
         }
