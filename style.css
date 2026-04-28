@@ -428,41 +428,54 @@ body {
     margin-bottom: 20px;
 }
 
+.tech-stack h3 {
+    text-align: center;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    text-shadow: -2px 0 0 var(--accent-color), 2px 0 0 #0ff, 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
 .tech-icons {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 15px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .tech-card {
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
-    padding: 15px;
-    border-radius: 12px;
+    padding: 12px 24px;
+    border-radius: 8px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1rem;
     transition: var(--transition);
 }
 
 .tech-card i {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     transition: var(--transition);
 }
 
 .tech-card:hover {
-    background: var(--card-border);
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--accent-color);
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
 .tech-card:hover i {
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(5deg);
 }
 
 /* Projects */
