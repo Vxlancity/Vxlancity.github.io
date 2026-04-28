@@ -195,54 +195,24 @@ body {
     position: relative;
 }
 
-/* Water Fill Effect - Enhanced */
+/* Text Fill Effect */
 .water-text {
     position: relative;
     display: inline-block;
     color: transparent;
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
-}
-
-.water-text::before,
-.water-text::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.15);
+    background: linear-gradient(to top, var(--accent-color) 50%, transparent 50%);
+    background-size: 100% 200%;
+    background-position: 0% 0%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-repeat: repeat-x;
+    animation: fill-text 2s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.5s;
+    filter: drop-shadow(0 0 15px rgba(227,27,35,0.3));
 }
 
-.water-text::before {
-    /* Back wave */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Cpath fill='rgba(227,27,35,0.4)' d='M0 100 C 100 150 100 50 200 100 C 300 150 300 50 400 100 L 400 200 L 0 200 Z'/%3E%3C/svg%3E");
-    background-size: 200% 100%;
-    animation: wave-back 5s linear infinite;
-    z-index: 1;
-}
-
-.water-text::after {
-    /* Front wave */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Cpath fill='%23E31B23' d='M0 100 C 100 50 100 150 200 100 C 300 50 300 150 400 100 L 400 200 L 0 200 Z'/%3E%3C/svg%3E");
-    background-size: 200% 100%;
-    animation: wave-front 4s linear infinite;
-    z-index: 2;
-    filter: drop-shadow(0 0 15px rgba(227,27,35,0.6));
-}
-
-@keyframes wave-front {
-    0% { background-position: 0% 150%; }
-    15% { background-position: 50% 50%; }
-    100% { background-position: 200% 50%; }
-}
-
-@keyframes wave-back {
-    0% { background-position: 100% 150%; }
-    15% { background-position: 50% 40%; }
-    100% { background-position: -100% 40%; }
+@keyframes fill-text {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 0% 100%; }
 }
 
 /* Override the accent color since the water effect handles it */
