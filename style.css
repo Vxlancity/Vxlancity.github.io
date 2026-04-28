@@ -55,24 +55,55 @@ body {
 #cursor {
     width: 8px;
     height: 8px;
+    margin-left: -4px;
+    margin-top: -4px;
     background-color: var(--accent-color);
     border-radius: 50%;
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    transition: transform 0.1s ease;
+    box-shadow: 0 0 10px var(--accent-glow);
 }
 
 #cursor-blur {
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0,0,0,0) 70%);
+    width: 250px;
+    height: 250px;
+    margin-left: -125px;
+    margin-top: -125px;
     position: fixed;
     pointer-events: none;
     z-index: 9998;
-    transform: translate(-50%, -50%);
-    filter: blur(20px);
+    border-radius: 50%;
+    mix-blend-mode: screen;
     opacity: 0.5;
+}
+
+#cursor-blur::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 1px dashed rgba(227, 27, 35, 0.4);
+    background: conic-gradient(from 0deg, transparent 70%, rgba(227, 27, 35, 0.3) 100%),
+                radial-gradient(circle, rgba(227, 27, 35, 0.15) 0%, transparent 60%);
+    animation: radar-spin 4s linear infinite;
+}
+
+#cursor-blur::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 40%; height: 40%;
+    border: 1px solid rgba(227, 27, 35, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 0 0 20px rgba(227, 27, 35, 0.1);
+}
+
+@keyframes radar-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* Navigation */
@@ -164,48 +195,54 @@ body {
     position: relative;
 }
 
-/* Water Fill Effect */
+/* Water Fill Effect - Enhanced */
 .water-text {
-    color: rgba(255, 255, 255, 0.05); /* Hidden/muted base text */
     position: relative;
     display: inline-block;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
+}
+
+.water-text::before,
+.water-text::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-repeat: repeat-x;
 }
 
 .water-text::before {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    color: var(--accent-color);
-    overflow: hidden;
-    filter: drop-shadow(0 0 15px var(--accent-glow));
-    animation: fill-up 4s ease-in-out 1s forwards, wave 2s linear infinite;
-    border-bottom: 4px solid var(--accent-color);
+    /* Back wave */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Cpath fill='rgba(227,27,35,0.4)' d='M0 100 C 100 150 100 50 200 100 C 300 150 300 50 400 100 L 400 200 L 0 200 Z'/%3E%3C/svg%3E");
+    background-size: 200% 100%;
+    animation: wave-back 5s linear infinite;
+    z-index: 1;
 }
 
-@keyframes fill-up {
-    0% { height: 0%; }
-    100% { height: 100%; }
+.water-text::after {
+    /* Front wave */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Cpath fill='%23E31B23' d='M0 100 C 100 50 100 150 200 100 C 300 50 300 150 400 100 L 400 200 L 0 200 Z'/%3E%3C/svg%3E");
+    background-size: 200% 100%;
+    animation: wave-front 4s linear infinite;
+    z-index: 2;
+    filter: drop-shadow(0 0 15px rgba(227,27,35,0.6));
 }
 
-@keyframes wave {
-    0%, 100% {
-        clip-path: polygon(
-            0% 45%, 15% 44%, 32% 50%, 
-            54% 60%, 70% 61%, 84% 59%, 
-            100% 52%, 100% 100%, 0% 100%
-        );
-    }
-    50% {
-        clip-path: polygon(
-            0% 60%, 16% 65%, 34% 66%, 
-            51% 62%, 67% 50%, 84% 45%, 
-            100% 46%, 100% 100%, 0% 100%
-        );
-    }
+@keyframes wave-front {
+    0% { background-position: 0% 150%; }
+    15% { background-position: 50% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+@keyframes wave-back {
+    0% { background-position: 100% 150%; }
+    15% { background-position: 50% 40%; }
+    100% { background-position: -100% 40%; }
 }
 
 /* Override the accent color since the water effect handles it */
