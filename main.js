@@ -143,13 +143,14 @@ function loadProjects() {
     if (storedProjects.length > 0) {
         projectGrid.innerHTML = storedProjects.map((p, index) => `
             <div class="project-card">
-                <div class="project-image" style="background: #111;"></div>
+                <div class="project-image" style="background-image: url('${p.image || ''}'); background-size: cover; background-position: center;"></div>
                 <div class="project-info">
                     <h3>${p.title}</h3>
                     <p>${p.desc}</p>
                     <div class="project-tags">
                         ${p.tags.map(tag => `<span>${tag}</span>`).join('')}
                     </div>
+                    ${p.url ? `<a href="${p.url}" class="project-link" target="_blank">Visit Website ↗</a>` : ''}
                 </div>
             </div>
         `).join('');
@@ -246,4 +247,38 @@ document.querySelectorAll('.tech-card').forEach(card => {
         });
     });
 });
+
+// Typing Effect
+const phrases = ["Full stack dev", "Building digital experiences", "Nothing to do", "Solving complex problems"];
+let currentPhraseIndex = 0;
+let currentCharIndex = 0;
+let isDeleting = false;
+const typingTextElement = document.querySelector('.typing-text');
+
+function type() {
+    if(!typingTextElement) return;
+    const currentPhrase = phrases[currentPhraseIndex];
+    
+    if (isDeleting) {
+        typingTextElement.textContent = currentPhrase.substring(0, currentCharIndex - 1);
+        currentCharIndex--;
+    } else {
+        typingTextElement.textContent = currentPhrase.substring(0, currentCharIndex + 1);
+        currentCharIndex++;
+    }
+
+    let typeSpeed = isDeleting ? 40 : 100;
+
+    if (!isDeleting && currentCharIndex === currentPhrase.length) {
+        typeSpeed = 2000; // Pause at end
+        isDeleting = true;
+    } else if (isDeleting && currentCharIndex === 0) {
+        isDeleting = false;
+        currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+        typeSpeed = 500; // Pause before start typing
+    }
+
+    setTimeout(type, typeSpeed);
+}
+setTimeout(type, 1000);
 

@@ -127,6 +127,8 @@
                 <input type="text" id="proj-title" placeholder="Project Title" required>
                 <input type="text" id="proj-desc" placeholder="Short Description" required>
                 <input type="text" id="proj-tags" placeholder="Tags (comma separated)">
+                <input type="text" id="proj-image" placeholder="Image URL (z.B. assets/project1.png)" required>
+                <input type="text" id="proj-url" placeholder="Website URL (https://...)" required>
                 <button type="submit" class="btn-primary">Add Project</button>
             </form>
             <div class="project-list" id="project-list"></div>
@@ -167,7 +169,9 @@
                 id: Date.now(),
                 title: document.getElementById('proj-title').value,
                 desc: document.getElementById('proj-desc').value,
-                tags: document.getElementById('proj-tags').value.split(',').map(t => t.trim())
+                tags: document.getElementById('proj-tags').value.split(',').map(t => t.trim()),
+                image: document.getElementById('proj-image').value,
+                url: document.getElementById('proj-url').value
             };
             projects.push(newProj);
             localStorage.setItem('projects', JSON.stringify(projects));

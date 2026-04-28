@@ -6,10 +6,11 @@
     <title>Vxlancity DEV | Portfolio</title>
     <meta name="description" content="Portfolio von Vxlancity DEV - Full-Stack Entwickler & Designer. Entdecke meine Projekte und Skills.">
     
-    <!-- Fonts -->
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Damion&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
     
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
@@ -41,6 +42,20 @@
             <div class="hero-container">
                 <div class="hero-content">
                     <h1 class="reveal-text water-text" data-text="Vxlancity dev">Vxlancity dev</h1>
+                    <div class="typing-container">
+                        <span class="typing-text"></span>
+                    </div>
+                    
+                    <div class="hero-code-block">
+<pre><code><span class="code-keyword">const</span> <span class="code-function">developer</span> = {
+    name: <span class="code-string">"Vxlancity"</span>,
+    role: <span class="code-string">"Full Stack Dev"</span>,
+    status: <span class="code-string">"Coding"</span>
+};
+<span class="code-comment">// Let's build something amazing</span>
+<span class="code-function">init</span>(developer);</code></pre>
+                    </div>
+
                     <p class="hero-subtitle">Crafting Digital Experiences with Precision & Passion</p>
                     <div class="hero-stats">
                         <div class="stat-item">
@@ -86,10 +101,19 @@
                 <div class="tech-stack">
                     <h3>Tech Stack</h3>
                     <div class="tech-icons">
-                        <div class="tech-card">React</div>
-                        <div class="tech-card">Node.js</div>
-                        <div class="tech-card">TypeScript</div>
-                        <div class="tech-card">GSAP</div>
+                        <div class="tech-card"><i class="devicon-java-plain colored"></i> Java</div>
+                        <div class="tech-card"><i class="devicon-javascript-plain colored"></i> JavaScript</div>
+                        <div class="tech-card"><i class="devicon-typescript-plain colored"></i> TypeScript</div>
+                        <div class="tech-card"><i class="devicon-html5-plain colored"></i> HTML</div>
+                        <div class="tech-card"><i class="devicon-css3-plain colored"></i> CSS</div>
+                        <div class="tech-card"><i class="devicon-react-original colored"></i> ReactJS</div>
+                        <div class="tech-card"><i class="devicon-nextjs-plain"></i> NextJS</div>
+                        <div class="tech-card"><i class="devicon-tailwindcss-original colored"></i> Tailwind</div>
+                        <div class="tech-card"><i class="devicon-nodejs-plain colored"></i> NodeJS</div>
+                        <div class="tech-card"><i class="devicon-maven-plain colored"></i> Maven</div>
+                        <div class="tech-card"><i class="devicon-gradle-plain colored"></i> Gradle</div>
+                        <div class="tech-card"><i class="devicon-mongodb-plain colored"></i> MongoDB</div>
+                        <div class="tech-card"><i class="devicon-mysql-plain colored"></i> MySQL</div>
                     </div>
                 </div>
             </div>
@@ -104,7 +128,7 @@
             <div class="project-grid">
                 <!-- Project Card 1 -->
                 <div class="project-card">
-                    <div class="project-image"></div>
+                    <div class="project-image" style="background-image: url('assets/project1.png'); background-size: cover; background-position: center;"></div>
                     <div class="project-info">
                         <h3>Project One</h3>
                         <p>A high-end web application with seamless animations.</p>
@@ -112,11 +136,12 @@
                             <span>React</span>
                             <span>GSAP</span>
                         </div>
+                        <a href="#" class="project-link" target="_blank">Visit Website ↗</a>
                     </div>
                 </div>
                 <!-- Project Card 2 -->
                 <div class="project-card">
-                    <div class="project-image"></div>
+                    <div class="project-image" style="background-image: url('assets/project2.png'); background-size: cover; background-position: center;"></div>
                     <div class="project-info">
                         <h3>Project Two</h3>
                         <p>Modern E-Commerce platform with Apple-style interactions.</p>
@@ -124,6 +149,7 @@
                             <span>Next.js</span>
                             <span>Tailwind</span>
                         </div>
+                        <a href="#" class="project-link" target="_blank">Visit Website ↗</a>
                     </div>
                 </div>
             </div>
