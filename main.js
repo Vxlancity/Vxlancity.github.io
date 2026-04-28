@@ -213,6 +213,13 @@ if (contactForm) {
     });
 }
 
+// Admin Shortcut (Alt + A)
+window.addEventListener('keydown', (e) => {
+    if (e.altKey && e.key.toLowerCase() === 'a') {
+        window.location.href = 'admin.html';
+    }
+});
+
 // Magnetic effect on tech cards (Bonus)
 document.querySelectorAll('.tech-card').forEach(card => {
     card.addEventListener('mousemove', (e) => {
