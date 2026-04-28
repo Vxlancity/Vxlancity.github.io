@@ -307,9 +307,11 @@ async function loadDiscordPresence() {
                     <div class="discord-status ${status}"></div>
                 </div>
                 <div class="discord-info">
-                    <h4>${user.global_name || user.username} ${nitroBadge}</h4>
-                    <p>@${user.username}</p>
-                    ${activityHtml}
+                    <h4 style="display: flex; align-items: center; gap: 5px; margin: 0;">${user.global_name || user.username} ${nitroBadge}</h4>
+                    <p style="margin: 0 !important; font-size: 0.8rem; opacity: 0.6;">@${user.username}</p>
+                    <div style="margin-top: 5px;">
+                        ${activityHtml || `<div class="discord-activity">${status === 'online' ? '🟢 Online' : (status === 'idle' ? '🌙 Idle' : (status === 'dnd' ? '🔴 Do Not Disturb' : '⚫ Offline'))}</div>`}
+                    </div>
                 </div>
             `;
         }
