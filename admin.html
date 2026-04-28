@@ -3,195 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Vxlancity</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Vxlancity DEV | Portfolio</title>
+    <meta name="description" content="Portfolio von Vxlancity DEV - Full-Stack Entwickler & Designer. Entdecke meine Projekte und Skills.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Damion&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-    <style>
-        .admin-container {
-            max-width: 800px;
-            margin: 100px auto;
-            padding: 40px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-        }
-        .admin-header {
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .admin-section {
-            margin-bottom: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--card-border);
-        }
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px; width: 26px;
-            left: 4px; bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--accent-color); }
-        input:checked + .slider:before { transform: translateX(26px); }
-
-        .project-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .project-list {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .project-item {
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .delete-btn {
-            background: #ff4444;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        #login-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-    </style>
 </head>
 <body>
-    <div id="login-overlay">
-        <div class="contact-box">
-            <h2>Admin Access</h2>
-            <input type="password" id="admin-pass" placeholder="Password (default: admin123)">
-            <button class="btn-primary" onclick="checkPass()">Login</button>
+    <!-- Custom Cursor -->
+    <div id="cursor"></div>
+    <div id="cursor-blur"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-content">
+            <div class="logo">Vxlancity</div>
+            <ul class="nav-links">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="#contact" class="btn-primary">Hire Me</a>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <div class="admin-container">
-        <div class="admin-header">
-            <h1>Admin Dashboard</h1>
-            <a href="index.html" class="btn-primary">Back to Site</a>
-        </div>
-
-        <div class="admin-section">
-            <h2>Maintenance Mode</h2>
-            <p>Toggle this to show a maintenance page to visitors.</p>
-            <label class="toggle-switch">
-                <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenance()">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="admin-section">
-            <h2>Discord Webhook</h2>
-            <p>Enter your Discord Webhook URL for contact notifications.</p>
-            <input type="text" id="webhook-url" placeholder="https://discord.com/api/webhooks/..." onchange="saveWebhook()">
-        </div>
-
-        <div class="admin-section">
-            <h2>Projects</h2>
-            <form class="project-form" onsubmit="addProject(event)">
-                <input type="text" id="proj-title" placeholder="Project Title" required>
-                <input type="text" id="proj-desc" placeholder="Short Description" required>
-                <input type="text" id="proj-tags" placeholder="Tags (comma separated)">
-                <button type="submit" class="btn-primary">Add Project</button>
-            </form>
-            <div class="project-list" id="project-list"></div>
-        </div>
-    </div>
-
-    <script>
-        function checkPass() {
-            const pass = document.getElementById('admin-pass').value;
-            if (pass === 'admin123') {
-                document.getElementById('login-overlay').style.display = 'none';
-                loadSettings();
-            } else {
-                alert('Wrong password!');
-            }
-        }
-
-        function loadSettings() {
-            document.getElementById('maintenance-toggle').checked = localStorage.getItem('maintenance') === 'true';
-            document.getElementById('webhook-url').value = localStorage.getItem('webhook') || '';
-            renderProjects();
-        }
-
-        function toggleMaintenance() {
-            const val = document.getElementById('maintenance-toggle').checked;
-            localStorage.setItem('maintenance', val);
-        }
-
-        function saveWebhook() {
-            const val = document.getElementById('webhook-url').value;
-            localStorage.setItem('webhook', val);
-        }
-
-        function addProject(e) {
-            e.preventDefault();
-            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-            const newProj = {
-                id: Date.now(),
-                title: document.getElementById('proj-title').value,
-                desc: document.getElementById('proj-desc').value,
-                tags: document.getElementById('proj-tags').value.split(',').map(t => t.trim())
-            };
-            projects.push(newProj);
-            localStorage.setItem('projects', JSON.stringify(projects));
-            renderProjects();
-            e.target.reset();
-        }
-
-        function deleteProject(id) {
-            let projects = JSON.parse(localStorage.getItem('projects') || '[]');
-            projects = projects.filter(p => p.id !== id);
-            localStorage.setItem('projects', JSON.stringify(projects));
-            renderProjects();
-        }
-
-        function renderProjects() {
-            const list = document.getElementById('project-list');
-            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-            list.innerHTML = projects.map(p => `
-                <div class="project-item">
-                    <span>${p.title}</span>
-                    <button class="delete-btn" onclick="deleteProject(${p.id})">Delete</button>
+    <main>
+        <!-- Hero Section -->
+        <section id="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1 class="reveal-text water-text" data-text="Vxlancity dev">Vxlancity dev</h1>
+                    <p class="hero-subtitle">Crafting Digital Experiences with Precision & Passion</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-num">5+</span>
+                            <span class="stat-label">Years Exp.</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-num">20+</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                    </div>
                 </div>
-            `).join('');
-        }
-    </script>
+                <div class="scroll-indicator">
+                    <div class="mouse"></div>
+                    <span>Scroll Down</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Apple Style Sticky Reveal Section -->
+        <section id="apple-reveal">
+            <div class="sticky-container">
+                <div class="reveal-content">
+                    <h2 class="sticky-title">Innovation is in the details.</h2>
+                    <div class="reveal-visual">
+                        <div class="glow-box"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="container">
+            <div class="section-header">
+                <h2 class="section-title">About Me</h2>
+                <div class="title-line"></div>
+            </div>
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>Ich bin ein leidenschaftlicher Entwickler mit Fokus auf moderne Web-Technologien und außergewöhnliche User Experiences.</p>
+                    <p>In meiner Arbeit verschmelzen Ästhetik und Performance zu einer einzigartigen digitalen Erfahrung.</p>
+                </div>
+                <div class="tech-stack">
+                    <h3>Tech Stack</h3>
+                    <div class="tech-icons">
+                        <div class="tech-card">React</div>
+                        <div class="tech-card">Node.js</div>
+                        <div class="tech-card">TypeScript</div>
+                        <div class="tech-card">GSAP</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="container">
+            <div class="section-header">
+                <h2 class="section-title">My Work</h2>
+                <div class="title-line"></div>
+            </div>
+            <div class="project-grid">
+                <!-- Project Card 1 -->
+                <div class="project-card">
+                    <div class="project-image"></div>
+                    <div class="project-info">
+                        <h3>Project One</h3>
+                        <p>A high-end web application with seamless animations.</p>
+                        <div class="project-tags">
+                            <span>React</span>
+                            <span>GSAP</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Card 2 -->
+                <div class="project-card">
+                    <div class="project-image"></div>
+                    <div class="project-info">
+                        <h3>Project Two</h3>
+                        <p>Modern E-Commerce platform with Apple-style interactions.</p>
+                        <div class="project-tags">
+                            <span>Next.js</span>
+                            <span>Tailwind</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="container">
+            <div class="contact-box">
+                <h2>Let's build something <span class="accent">amazing</span>.</h2>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Vxlancity DEV. All rights reserved.</p>
+            <div class="socials">
+                <a href="#">GitHub</a>
+                <a href="#">Discord</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
