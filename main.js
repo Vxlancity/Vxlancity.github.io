@@ -419,6 +419,34 @@ async function loadConfig() {
                 footerSocialContainer.innerHTML = links.map(link => `<a href="${link}" target="_blank" class="project-link">${getLinkIconHTML(link)}</a>`).join('');
             }
 
+            // Favorite Anime
+            if (config.favorite_anime) {
+                const animeBadge = document.getElementById('anime-badge');
+                const animeDisplay = document.getElementById('favorite-anime-display');
+                if (animeBadge && animeDisplay) {
+                    animeBadge.style.display = 'inline-flex';
+                    animeDisplay.textContent = config.favorite_anime;
+                }
+            }
+
+            // Visitor Counter with Session Lock
+            const visitCountEl = document.getElementById('visit-count');
+            if (visitCountEl) {
+                let currentViews = parseInt(config.page_views || '0');
+                
+                if (!sessionStorage.getItem('vxlancity_counted')) {
+                    currentViews++;
+                    // Save back to Supabase
+                    supabaseClient.from('site_config')
+                        .upsert({ key: 'page_views', value: currentViews.toString() })
+                        .then(() => {
+                            sessionStorage.setItem('vxlancity_counted', 'true');
+                        });
+                }
+                
+                visitCountEl.textContent = currentViews.toLocaleString();
+            }
+
             // Webhook URL
             if (config.webhook) {
                 localStorage.setItem('webhook', config.webhook);
@@ -454,8 +482,7 @@ async function loadDiscordPresence(overrideId = null, forceNitro = false) {
             const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${isAnimated ? 'gif' : 'png'}?size=128` : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
             const showsNitro = isAnimated || hasNitroConfig;
-            const nitroBadge = showsNitro ? `<span title="Nitro User" style="color: #ff73fa; font-size: 0.9rem; margin-left: 5px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M19.12 10.43c-.44-.43-.88-.86-1.31-1.3-.43-.44-.86-.88-1.3-1.31-.44-.43-.87-.87-1.31-1.3-.44-.44-.87-.87-1.31-1.31-.43-.43-.87-.87-1.3-1.31s-.87-.87-1.31-1.3c-.44-.44-.87-.87-1.31-1.3-.44-.44-.88-.88-1.32-1.31-.22-.22-.44-.43-.65-.65-.11-.11-.22-.22-.32-.32-.22-.21-.43-.43-.65-.65-.22-.21-.44-.43-.65-.65-.21-.22-.43-.43-.64-.65-.22-.21-.44-.43-.65-.65-.22-.22-.43-.43-.65-.65-.22-.21-.43-.43-.65-.64-.21-.22-.43-.43-.65-.65-.1-.11-.21-.22-.32-.32-.21-.22-.43-.43-.65-.65l-.65-.65a1 1 0 00-1.42 0l-.65.65c-.21.22-.43.43-.65.65-.1.11-.21.22-.32.32-.22.21-.43.43-.65.65-.22.21-.44.43-.65.65-.21.22-.43.43-.64.65-.22.21-.44.43-.65.65-.22-.22-.43.43-.65.65-.22-.21-.43-.43-.65-.64-.21.22-.43.43-.65.65-.1.11-.21.22-.32.32-.21.22-.43.43-.65.65l-.65.65a1 1 0 000 1.42l.65.65c.22.21.43.43.65.65.11.1-.22.21.32.32.21.22.43.43.65.65.22.21.44.43.65.65.21.22.43.43.64.65.22.21.44.43.65.65.22-.22.43.43.65.65.22.21.43.43.65.64.21.22.43.43.65.65.11.1.22.21.32.32.22.21.43.43.65.65l.65.65a1 1 0 001.42 0l.65-.65c.21-.22.43-.43.65-.65.1-.11.21-.22.32-.32.22-.21.43-.43.65-.65.22-.21.44-.43.65-.65.21-.22.43-.43.64-.65.22-.21.44-.43.65-.65.22-.22.43-.43.65-.65.22-.21.43-.43.65-.64.21-.22.43-.43.65-.65.1-.11.21-.22.32-.32.21-.22.43-.43.65-.65l.65-.65a1 1 0 000-1.42l-.65-.65c-.22-.21-.43-.43-.65-.65-.1-.11-.21-.22-.32-.32zM12 18.25a6.25 6.25 0 110-12.5 6.25 6.25 0 010 12.5z"/></svg></span>` : '';
+            const nitroBadge = showsNitro ? `<img src="https://cdn.discordapp.com/badge-icons/2ba85e8026a8614b640c2837bcdfe21b.png" title="Nitro User" alt="Nitro" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;">` : '';
 
             let activitiesHtml = '';
             
@@ -745,7 +772,15 @@ const translations = {
         'nav.contact': 'Contact',
         'nav.hireMe': 'Hire Me',
         'about.title': 'About Me & Services',
-        'about.p1': 'I\'m a passionate developer focused on building high-performance, aesthetically pleasing digital experiences. With expertise in full-stack development and a keen eye for modern design trends, I transform complex ideas into elegant solutions.',
+        'about.cat1Title': '👤 Who am I?',
+        'about.cat1Desc': 'I\'m a 14-year-old developer based in Lower Saxony, Germany.',
+        'about.cat2Title': '💻 What I do',
+        'about.cat2Desc': 'I build custom websites, backend systems, and full-stack applications.',
+        'about.cat3Title': '🎯 Vision',
+        'about.cat3Desc': 'Creating lightning-fast, modern, and visually stunning web experiences.',
+        'about.cat4Title': '🍿 Hobbies',
+        'about.cat4Desc': 'When I\'m not coding or designing, I\'m usually watching anime.',
+        'about.anime': 'Favorite Anime:',
         'about.servicesTitle': '🚀 Custom Websites on Demand',
         'about.servicesDesc': 'Looking for a modern, fast, and impressive website? I build <strong>completely custom websites</strong> on request – from portfolios to landing pages to complex web apps, tailored to your needs.',
         'about.techStack': 'TECH STACK',
@@ -765,7 +800,15 @@ const translations = {
         'nav.contact': 'Kontakt',
         'nav.hireMe': 'Beauftragen',
         'about.title': 'Über Mich & Services',
-        'about.p1': 'Ich bin ein leidenschaftlicher Entwickler mit Fokus auf hochperformante, ästhetisch ansprechende digitale Erlebnisse. Mit Expertise in Full-Stack-Entwicklung und einem feinen Gespür für moderne Design-Trends verwandle ich komplexe Ideen in elegante Lösungen.',
+        'about.cat1Title': '👤 Wer bin ich?',
+        'about.cat1Desc': 'Ich bin ein 14-jähriger Developer aus Niedersachsen.',
+        'about.cat2Title': '💻 Was ich mache',
+        'about.cat2Desc': 'Ich entwickle Custom-Websites, Backend-Systeme und Full-Stack-Apps.',
+        'about.cat3Title': '🎯 Vision',
+        'about.cat3Desc': 'Ich erschaffe blitzschnelle, moderne und optisch beeindruckende Web-Erlebnisse.',
+        'about.cat4Title': '🍿 Hobbys',
+        'about.cat4Desc': 'Wenn ich nicht gerade code, schaue ich am liebsten Anime.',
+        'about.anime': 'Lieblings-Anime:',
         'about.servicesTitle': '🚀 Custom Websites auf Anfrage',
         'about.servicesDesc': 'Du suchst eine moderne, schnelle und beeindruckende Website? Ich erstelle <strong>komplett individuelle Websites</strong> auf Anfrage – von Portfolios über Landingpages bis hin zu komplexen Web-Apps, maßgeschneidert auf deine Bedürfnisse.',
         'about.techStack': 'TECHNOLOGIEN',

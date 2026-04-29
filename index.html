@@ -170,11 +170,34 @@
                         <h2 class="section-title" data-translate="about.title">About Me & Services</h2>
                         <div class="title-line"></div>
                     </div>
-                    <div class="about-text">
-                        <p class="reveal-text" data-translate="about.p1">I'm a passionate developer focused on building high-performance,
-                            aesthetically pleasing digital experiences. With expertise in full-stack development and a
-                            keen eye for modern design trends, I transform complex ideas into elegant solutions.</p>
-                    </div> <br>
+                    <div class="about-categories">
+                        <!-- Category 1: Who am I -->
+                        <div class="about-card">
+                            <h4 data-translate="about.cat1Title">👤 Who am I?</h4>
+                            <p data-translate="about.cat1Desc">I'm a 14-year-old developer from Lower Saxony, Germany.</p>
+                        </div>
+                        
+                        <!-- Category 2: What I do -->
+                        <div class="about-card">
+                            <h4 data-translate="about.cat2Title">💻 What I do</h4>
+                            <p data-translate="about.cat2Desc">I build custom websites, backend systems, and full-stack applications.</p>
+                        </div>
+
+                        <!-- Category 3: Vision -->
+                        <div class="about-card">
+                            <h4 data-translate="about.cat3Title">🎯 Vision</h4>
+                            <p data-translate="about.cat3Desc">Creating lightning-fast, modern, and visually stunning web experiences.</p>
+                        </div>
+
+                        <!-- Category 4: Hobbies -->
+                        <div class="about-card">
+                            <h4 data-translate="about.cat4Title">🍿 Hobbies</h4>
+                            <p data-translate="about.cat4Desc">When I'm not coding or designing, I'm usually watching anime.</p>
+                            <div id="anime-badge" style="display: none; margin-top: 12px; padding: 6px 10px; background: rgba(39, 201, 63, 0.05); border: 1px solid rgba(39, 201, 63, 0.2); border-radius: 6px; color: #27c93f; font-family: monospace; font-size: 0.85rem; align-items: center; gap: 6px;">
+                                <span data-translate="about.anime">Fav Anime:</span> <strong id="favorite-anime-display" style="color: var(--text-color);"></strong>
+                            </div>
+                        </div>
+                    </div>
                     <div class="services-highlight" style="background: rgba(227, 27, 35, 0.05); border: 1px solid rgba(227, 27, 35, 0.2); padding: 20px; border-radius: 12px; margin-top: 15px;">
                         <h3 style="color: var(--accent-color); margin-bottom: 10px; font-size: 1.2rem;" data-translate="about.servicesTitle">🚀 Custom Websites on Demand</h3>
                         <p style="font-size: 0.95rem; line-height: 1.5;" data-translate="about.servicesDesc">Du suchst eine moderne, schnelle und beeindruckende Website? Ich erstelle <strong>komplett individuelle Websites</strong> auf Anfrage – von Portfolios über Landingpages bis hin zu komplexen Web-Apps, maßgeschneidert auf deine Bedürfnisse.</p>
@@ -338,12 +361,21 @@
 
     <footer>
         <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <p data-translate="footer.rights">&copy; 2026 Vxlancity DEV. All rights reserved.</p>
-            <div class="lang-toggle footer-lang" style="font-family: monospace; font-size: 0.9rem; cursor: pointer; display: flex; gap: 5px;">
-                <span class="lang-btn active" data-lang="en" style="color: var(--accent-color);">EN</span>
-                <span style="color: var(--muted-color);">/</span>
-                <span class="lang-btn" data-lang="de" style="color: var(--muted-color); transition: 0.3s;">DE</span>
+            <p data-translate="footer.rights" style="margin: 0;">&copy; 2026 Vxlancity DEV. All rights reserved.</p>
+            
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div id="visitor-counter" style="font-family: monospace; font-size: 0.85rem; color: var(--muted-color); background: rgba(255,255,255,0.03); padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 8px;">
+                    <span style="color: var(--accent-color);">VISITS:</span>
+                    <span id="visit-count">...</span>
+                </div>
+                
+                <div class="lang-toggle footer-lang" style="font-family: monospace; font-size: 0.9rem; cursor: pointer; display: flex; gap: 5px;">
+                    <span class="lang-btn active" data-lang="en" style="color: var(--accent-color);">EN</span>
+                    <span style="color: var(--muted-color);">/</span>
+                    <span class="lang-btn" data-lang="de" style="color: var(--muted-color); transition: 0.3s;">DE</span>
+                </div>
             </div>
+
             <div class="socials" id="footer-social-container">
             </div>
         </div>

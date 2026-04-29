@@ -134,7 +134,20 @@
                 <label for="has-nitro" style="margin: 0; cursor: pointer;">Show Discord Nitro Badge</label>
             </div>
 
-            <button class="btn-primary" onclick="saveConfig()">Save All Configs to Cloud</button>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Favorite Anime</label>
+                <input type="text" id="favorite-anime" placeholder="e.g. One Piece, Naruto...">
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <h3 style="font-size: 1.1rem; margin-bottom: 10px;">Visitor Counter</h3>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span id="admin-visit-count" style="font-family: monospace; font-size: 1.2rem; color: var(--accent-color);">0</span>
+                    <button class="btn-primary" style="background: #333; padding: 8px 15px; font-size: 0.85rem;" onclick="resetCounter()">Reset Counter</button>
+                </div>
+            </div>
+
+            <button class="btn-primary" style="margin-top: 30px;" onclick="saveConfig()">Save All Configs to Cloud</button>
         </div>
 
         <div class="admin-section">
@@ -228,6 +241,18 @@
                 document.getElementById('site-progress').value = config.site_progress || '60';
                 document.getElementById('progress-display').textContent = (config.site_progress || '60') + '%';
                 document.getElementById('has-nitro').checked = config.has_nitro === 'true';
+                document.getElementById('favorite-anime').value = config.favorite_anime || '';
+                document.getElementById('admin-visit-count').textContent = config.page_views || '0';
+            }
+        }
+
+        async function resetCounter() {
+            if (!confirm('Are you sure you want to reset the visitor counter to 0?')) return;
+            const { error } = await supabaseClient.from('site_config').upsert({ key: 'page_views', value: '0' });
+            if (error) alert('Error: ' + error.message);
+            else {
+                document.getElementById('admin-visit-count').textContent = '0';
+                alert('Counter reset successfully!');
             }
         }
 
@@ -239,7 +264,8 @@
                 { key: 'footer_socials', value: document.getElementById('footer-socials').value },
                 { key: 'hero_title', value: document.getElementById('hero-title').value },
                 { key: 'site_progress', value: document.getElementById('site-progress').value },
-                { key: 'has_nitro', value: document.getElementById('has-nitro').checked ? 'true' : 'false' }
+                { key: 'has_nitro', value: document.getElementById('has-nitro').checked ? 'true' : 'false' },
+                { key: 'favorite_anime', value: document.getElementById('favorite-anime').value }
             ];
 
             const { error } = await supabaseClient.from('site_config').upsert(configs);

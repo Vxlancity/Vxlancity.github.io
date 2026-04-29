@@ -373,13 +373,14 @@ body {
 
 /* Hero Section */
 #hero {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     position: relative;
-    padding-top: 100px; /* Push content down so it doesn't overlap header */
+    padding-bottom: 100px; /* Space for the absolute scroll indicator */
 }
 
 /* Language Switcher */
@@ -390,6 +391,10 @@ body {
 }
 .lang-btn:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.hero-content {
+    margin-top: 140px; /* Push it down so it never touches the header */
 }
 
 .hero-content h1 {
@@ -1310,4 +1315,55 @@ footer {
     .contact-box {
         padding: 40px 20px;
     }
+}
+
+/* About Categories */
+.about-categories {
+    margin-top: 30px;
+}
+
+.about-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(227, 27, 35, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(227, 27, 35, 0.1);
+}
+
+.about-card h4 {
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.about-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--muted-color);
+}
+
+.about-card:hover p {
+    color: var(--text-color);
+}
+
+#anime-badge {
+    transition: all 0.3s ease;
+}
+
+.about-card:hover #anime-badge {
+    border-color: rgba(39, 201, 63, 0.5);
+    background: rgba(39, 201, 63, 0.1);
 }
