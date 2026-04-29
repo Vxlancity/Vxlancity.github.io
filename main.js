@@ -123,6 +123,52 @@ gsap.registerPlugin(ScrollTrigger);
 const cursor = document.getElementById('cursor');
 const cursorBlur = document.getElementById('cursor-blur');
 
+// Typed.js style effect for the badge
+document.addEventListener('DOMContentLoaded', () => {
+    const badgeContainer = document.getElementById('badge-container');
+    if (badgeContainer) {
+        // The raw code string that will be typed
+        const codeString = '<div class="badge">\n  <span>Available for Custom Websites</span>\n</div>';
+        let i = 0;
+        
+        // Create a span to hold the typed code
+        const codeDisplay = document.createElement('div');
+        codeDisplay.style.fontFamily = 'monospace';
+        codeDisplay.style.color = 'rgba(255, 255, 255, 0.6)';
+        codeDisplay.style.fontSize = '0.9rem';
+        codeDisplay.style.textAlign = 'left';
+        codeDisplay.style.whiteSpace = 'pre';
+        badgeContainer.appendChild(codeDisplay);
+
+        // Start typing after 1.5 seconds (after hero text appears)
+        setTimeout(() => {
+            const typeInterval = setInterval(() => {
+                codeDisplay.textContent += codeString.charAt(i);
+                i++;
+                if (i >= codeString.length) {
+                    clearInterval(typeInterval);
+                    // Flash effect and compile into real badge
+                    setTimeout(() => {
+                        badgeContainer.innerHTML = `
+                            <div class="availability-badge" style="margin-bottom: 0;">
+                                <span class="pulse-dot"></span>
+                                Available for Custom Websites & Freelance
+                            </div>
+                        `;
+                        
+                        // Add a small pop animation to the newly compiled badge
+                        const newBadge = badgeContainer.querySelector('.availability-badge');
+                        newBadge.style.animation = 'none'; // remove the old clip-path animation
+                        newBadge.style.clipPath = 'none';
+                        gsap.from(newBadge, { scale: 0.8, opacity: 0, duration: 0.5, ease: 'back.out(1.5)' });
+
+                    }, 600); // pause before compiling
+                }
+            }, 30); // 30ms per character
+        }, 1500);
+    }
+});
+
 document.addEventListener('mousemove', (e) => {
     gsap.to(cursor, {
         x: e.clientX,
@@ -357,7 +403,8 @@ async function loadConfig() {
             // Discord
             if (config.discord_id) {
                 localStorage.setItem('discord-userid', config.discord_id);
-                loadDiscordPresence(config.discord_id);
+                localStorage.setItem('has-nitro', config.has_nitro === 'true' ? 'true' : 'false');
+                loadDiscordPresence(config.discord_id, config.has_nitro === 'true');
             }
 
             // Terminal Socials
@@ -386,8 +433,9 @@ const footerSocialContainer = document.getElementById('footer-social-container')
 loadConfig();
 
 // Lanyard Discord Presence
-async function loadDiscordPresence(overrideId = null) {
+async function loadDiscordPresence(overrideId = null, forceNitro = false) {
     const discordId = overrideId || localStorage.getItem('discord-userid');
+    const hasNitroConfig = forceNitro || localStorage.getItem('has-nitro') === 'true';
     if (!discordId) return;
 
     const widget = document.getElementById('discord-widget');
@@ -405,20 +453,49 @@ async function loadDiscordPresence(overrideId = null) {
             const isAnimated = user.avatar && user.avatar.startsWith('a_');
             const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${isAnimated ? 'gif' : 'png'}?size=128` : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-            const nitroBadge = isAnimated ? `<span title="Nitro User" style="color: #ff73fa; font-size: 0.9rem; margin-left: 5px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M19.12 10.43c-.44-.43-.88-.86-1.31-1.3-.43-.44-.86-.88-1.3-1.31-.44-.43-.87-.87-1.31-1.3-.44-.44-.87-.87-1.31-1.31-.43-.43-.87-.87-1.3-1.31s-.87-.87-1.31-1.3c-.44-.44-.87-.87-1.31-1.3-.44-.44-.88-.88-1.32-1.31-.22-.22-.44-.43-.65-.65-.11-.11-.22-.22-.32-.32-.22-.21-.43-.43-.65-.65-.22-.21-.44-.43-.65-.65-.21-.22-.43-.43-.64-.65-.22-.21-.44-.43-.65-.65-.22-.22-.43-.43-.65-.65-.22-.21-.43-.43-.65-.64-.21-.22-.43-.43-.65-.65-.1-.11-.21-.22-.32-.32-.21-.22-.43-.43-.65-.65l-.65-.65a1 1 0 00-1.42 0l-.65.65c-.21.22-.43.43-.65.65-.1.11-.21.22-.32.32-.22.21-.43.43-.65.65-.22.21-.44.43-.65.65-.21.22-.43.43-.64.65-.22.21-.44.43-.65.65-.22.22-.43.43-.65.65-.22.21-.43.43-.65.64-.21.22-.43.43-.65.65-.1.11-.21.22-.32.32-.21.22-.43.43-.65.65l-.65.65a1 1 0 000 1.42l.65.65c.22.21.43.43.65.65.11.1-.22.21.32.32.21.22.43.43.65.65.22.21.44.43.65.65.21.22.43.43.64.65.22.21.44.43.65.65.22.22.43.43.65.65.22.21.43.43.65.64.21.22.43.43.65.65.11.1.22.21.32.32.22.21.43.43.65.65l.65.65a1 1 0 001.42 0l.65-.65c.21-.22.43-.43.65-.65.1-.11.21-.22.32-.32.22-.21.43-.43.65-.65.22-.21.44-.43.65-.65.21-.22.43-.43.64-.65.22-.21.44-.43.65-.65.22-.22.43-.43.65-.65.22-.21.43-.43.65-.64.21-.22.43-.43.65-.65.1-.11.21-.22.32-.32.21-.22.43-.43.65-.65l.65-.65a1 1 0 000-1.42l-.65-.65c-.22-.21-.43-.43-.65-.65-.1-.11-.21-.22-.32-.32zM12 18.25a6.25 6.25 0 110-12.5 6.25 6.25 0 010 12.5z"/></svg></span>` : '';
+            const showsNitro = isAnimated || hasNitroConfig;
+            const nitroBadge = showsNitro ? `<span title="Nitro User" style="color: #ff73fa; font-size: 0.9rem; margin-left: 5px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M19.12 10.43c-.44-.43-.88-.86-1.31-1.3-.43-.44-.86-.88-1.3-1.31-.44-.43-.87-.87-1.31-1.3-.44-.44-.87-.87-1.31-1.31-.43-.43-.87-.87-1.3-1.31s-.87-.87-1.31-1.3c-.44-.44-.87-.87-1.31-1.3-.44-.44-.88-.88-1.32-1.31-.22-.22-.44-.43-.65-.65-.11-.11-.22-.22-.32-.32-.22-.21-.43-.43-.65-.65-.22-.21-.44-.43-.65-.65-.21-.22-.43-.43-.64-.65-.22-.21-.44-.43-.65-.65-.22-.22-.43-.43-.65-.65-.22-.21-.43-.43-.65-.64-.21-.22-.43-.43-.65-.65-.1-.11-.21-.22-.32-.32-.21-.22-.43-.43-.65-.65l-.65-.65a1 1 0 00-1.42 0l-.65.65c-.21.22-.43.43-.65.65-.1.11-.21.22-.32.32-.22.21-.43.43-.65.65-.22.21-.44.43-.65.65-.21.22-.43.43-.64.65-.22.21-.44.43-.65.65-.22-.22-.43.43-.65.65-.22-.21-.43-.43-.65-.64-.21.22-.43.43-.65.65-.1.11-.21.22-.32.32-.21.22-.43.43-.65.65l-.65.65a1 1 0 000 1.42l.65.65c.22.21.43.43.65.65.11.1-.22.21.32.32.21.22.43.43.65.65.22.21.44.43.65.65.21.22.43.43.64.65.22.21.44.43.65.65.22-.22.43.43.65.65.22.21.43.43.65.64.21.22.43.43.65.65.11.1.22.21.32.32.22.21.43.43.65.65l.65.65a1 1 0 001.42 0l.65-.65c.21-.22.43-.43.65-.65.1-.11.21-.22.32-.32.22-.21.43-.43.65-.65.22-.21.44-.43.65-.65.21-.22.43-.43.64-.65.22-.21.44-.43.65-.65.22-.22.43-.43.65-.65.22-.21.43-.43.65-.64.21-.22.43-.43.65-.65.1-.11.21-.22.32-.32.21-.22.43-.43.65-.65l.65-.65a1 1 0 000-1.42l-.65-.65c-.22-.21-.43-.43-.65-.65-.1-.11-.21-.22-.32-.32zM12 18.25a6.25 6.25 0 110-12.5 6.25 6.25 0 010 12.5z"/></svg></span>` : '';
 
-            let activityHtml = '';
+            let activitiesHtml = '';
+            
+            // Always show base status first
+            const baseStatusHtml = `<div class="discord-activity" style="margin-bottom: 4px;">${status === 'online' ? '🟢 Online' : (status === 'idle' ? '🌙 Idle' : (status === 'dnd' ? '🔴 Do Not Disturb' : '⚫ Offline'))}</div>`;
+            activitiesHtml += baseStatusHtml;
+
+            if (data.activities && data.activities.length > 0) {
+                data.activities.forEach(activity => {
+                    if (activity.id === 'spotify:1') return; // Handled separately
+                    
+                    if (activity.type === 4) {
+                        // Custom Status
+                        let emojiHtml = '';
+                        if (activity.emoji) {
+                            if (activity.emoji.id) {
+                                emojiHtml = `<img src="https://cdn.discordapp.com/emojis/${activity.emoji.id}.${activity.emoji.animated ? 'gif' : 'png'}" style="width: 14px; height: 14px; vertical-align: middle;"> `;
+                            } else if (activity.emoji.name) {
+                                emojiHtml = `${activity.emoji.name} `;
+                            }
+                        }
+                        activitiesHtml += `<div class="discord-activity" style="margin-bottom: 4px; color: var(--accent-color);">${emojiHtml}<strong>${activity.state || activity.name}</strong></div>`;
+                    } else if (activity.type === 0) {
+                        activitiesHtml += `<div class="discord-activity" style="margin-bottom: 4px;">🎮 Playing <strong>${activity.name}</strong></div>`;
+                    } else if (activity.type === 3) {
+                        activitiesHtml += `<div class="discord-activity" style="margin-bottom: 4px;">📺 Watching <strong>${activity.name}</strong></div>`;
+                    } else if (activity.type === 2) {
+                        activitiesHtml += `<div class="discord-activity" style="margin-bottom: 4px;">🎧 Listening to <strong>${activity.name}</strong></div>`;
+                    } else if (activity.type === 5) {
+                        activitiesHtml += `<div class="discord-activity" style="margin-bottom: 4px;">🏆 Competing in <strong>${activity.name}</strong></div>`;
+                    } else {
+                        activitiesHtml += `<div class="discord-activity" style="margin-bottom: 4px;">✨ <strong>${activity.name}</strong></div>`;
+                    }
+                });
+            }
+
             if (data.listening_to_spotify) {
                 const spotify = data.spotify;
-                activityHtml = `<div class="discord-activity"><svg width="14" height="14" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.51 17.3c-.22.36-.68.47-1.05.25-2.82-1.73-6.35-2.12-10.51-1.17-.41.1-.83-.16-.93-.57-.1-.41.16-.83.57-.93 4.54-1.04 8.44-.6 11.58 1.33.37.22.48.69.26 1.05v.04zm1.48-3.26c-.28.46-.88.6-1.34.33-3.22-1.98-8.13-2.55-11.95-1.39-.52.16-1.08-.14-1.24-.66-.16-.52.14-1.08.66-1.24 4.38-1.33 9.79-.7 13.54 1.6.46.28.6.88.33 1.34v.02zm.12-3.38C15.54 8.65 10.1 8.47 7.02 9.4c-.58.18-1.2-.16-1.38-.74-.18-.58.16-1.2.74-1.38 3.56-1.08 9.55-.86 13.72 1.62.53.31.7.99.39 1.52-.31.53-.99.7-1.52.39z"/></svg> Listening to <strong>${spotify.song}</strong></div>`;
-            } else if (data.activities && data.activities.length > 0) {
-                const activity = data.activities[0];
-                if (activity.type === 0) {
-                    activityHtml = `<div class="discord-activity">🎮 Playing <strong>${activity.name}</strong></div>`;
-                } else if (activity.type === 4) {
-                    activityHtml = `<div class="discord-activity">💬 ${activity.state || activity.name}</div>`;
-                }
+                const spotifyUrl = `https://open.spotify.com/track/${spotify.track_id}`;
+                activitiesHtml += `<div class="discord-activity" style="margin-bottom: 4px;"><a href="${spotifyUrl}" target="_blank" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.3s;" onmouseover="this.style.color='#1DB954'" onmouseout="this.style.color='inherit'"><svg width="14" height="14" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.51 17.3c-.22.36-.68.47-1.05.25-2.82-1.73-6.35-2.12-10.51-1.17-.41.1-.83-.16-.93-.57-.1-.41.16-.83.57-.93 4.54-1.04 8.44-.6 11.58 1.33.37.22.48.69.26 1.05v.04zm1.48-3.26c-.28.46-.88.6-1.34.33-3.22-1.98-8.13-2.55-11.95-1.39-.52.16-1.08-.14-1.24-.66-.16-.52.14-1.08.66-1.24 4.38-1.33 9.79-.7 13.54 1.6.46.28.6.88.33 1.34v.02zm.12-3.38C15.54 8.65 10.1 8.47 7.02 9.4c-.58.18-1.2-.16-1.38-.74-.18-.58.16-1.2.74-1.38 3.56-1.08 9.55-.86 13.72 1.62.53.31.7.99.39 1.52-.31.53-.99.7-1.52.39z"/></svg> Listening to <strong>${spotify.song}</strong></a></div>`;
             }
 
             widget.innerHTML = `
@@ -429,8 +506,8 @@ async function loadDiscordPresence(overrideId = null) {
                 <div class="discord-info">
                     <h4 style="display: flex; align-items: center; gap: 5px; margin: 0;">${user.global_name || user.username} ${nitroBadge}</h4>
                     <p style="margin: 0 !important; font-size: 0.8rem; opacity: 0.6;">@${user.username}</p>
-                    <div style="margin-top: 5px;">
-                        ${activityHtml || `<div class="discord-activity">${status === 'online' ? '🟢 Online' : (status === 'idle' ? '🌙 Idle' : (status === 'dnd' ? '🔴 Do Not Disturb' : '⚫ Offline'))}</div>`}
+                    <div style="margin-top: 5px; display: flex; flex-direction: column;">
+                        ${activitiesHtml}
                     </div>
                 </div>
             `;
@@ -658,3 +735,130 @@ function type() {
     setTimeout(type, typeSpeed);
 }
 setTimeout(type, 1000);
+
+// --- Translation & Hacker Scramble System ---
+const translations = {
+    en: {
+        'nav.home': 'Home',
+        'nav.about': 'About',
+        'nav.projects': 'Projects',
+        'nav.contact': 'Contact',
+        'nav.hireMe': 'Hire Me',
+        'about.title': 'About Me & Services',
+        'about.p1': 'I\'m a passionate developer focused on building high-performance, aesthetically pleasing digital experiences. With expertise in full-stack development and a keen eye for modern design trends, I transform complex ideas into elegant solutions.',
+        'about.servicesTitle': '🚀 Custom Websites on Demand',
+        'about.servicesDesc': 'Looking for a modern, fast, and impressive website? I build <strong>completely custom websites</strong> on request – from portfolios to landing pages to complex web apps, tailored to your needs.',
+        'about.techStack': 'TECH STACK',
+        'projects.title': 'My Work',
+        'contact.title': 'Ready for your <span class="accent">Custom Website</span>?',
+        'contact.desc': 'Do you have an idea for a website or want to commission a completely custom project? Just send me a message!',
+        'contact.name': 'Name',
+        'contact.email': 'Email',
+        'contact.message': 'Message',
+        'contact.send': 'Send Message',
+        'footer.rights': '&copy; 2026 Vxlancity DEV. All rights reserved.'
+    },
+    de: {
+        'nav.home': 'Start',
+        'nav.about': 'Über Mich',
+        'nav.projects': 'Projekte',
+        'nav.contact': 'Kontakt',
+        'nav.hireMe': 'Beauftragen',
+        'about.title': 'Über Mich & Services',
+        'about.p1': 'Ich bin ein leidenschaftlicher Entwickler mit Fokus auf hochperformante, ästhetisch ansprechende digitale Erlebnisse. Mit Expertise in Full-Stack-Entwicklung und einem feinen Gespür für moderne Design-Trends verwandle ich komplexe Ideen in elegante Lösungen.',
+        'about.servicesTitle': '🚀 Custom Websites auf Anfrage',
+        'about.servicesDesc': 'Du suchst eine moderne, schnelle und beeindruckende Website? Ich erstelle <strong>komplett individuelle Websites</strong> auf Anfrage – von Portfolios über Landingpages bis hin zu komplexen Web-Apps, maßgeschneidert auf deine Bedürfnisse.',
+        'about.techStack': 'TECHNOLOGIEN',
+        'projects.title': 'Meine Projekte',
+        'contact.title': 'Bereit für deine <span class="accent">eigene Website</span>?',
+        'contact.desc': 'Hast du eine Idee für eine Website oder möchtest du ein komplett eigenes Projekt in Auftrag geben? Schreib mir einfach!',
+        'contact.name': 'Name',
+        'contact.email': 'E-Mail',
+        'contact.message': 'Nachricht',
+        'contact.send': 'Nachricht senden',
+        'footer.rights': '&copy; 2026 Vxlancity DEV. Alle Rechte vorbehalten.'
+    }
+};
+
+let currentLang = 'en';
+const scrambleChars = '!<>-_\\\\/[]{}—=+*^?#_';
+
+function scrambleText(element, newText) {
+    const isHtml = newText.includes('<');
+    
+    // Extract plain text for scrambling if there's HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = newText;
+    const textToScramble = tempDiv.textContent;
+    
+    let iteration = 0;
+    const maxIterations = 20;
+    const originalColor = window.getComputedStyle(element).color;
+    
+    // Temporarily style as hacker text
+    element.style.color = '#27c93f';
+    element.style.fontFamily = 'monospace';
+
+    const interval = setInterval(() => {
+        element.innerText = textToScramble
+            .split('')
+            .map((letter, index) => {
+                if (index < (iteration / maxIterations) * textToScramble.length) {
+                    return textToScramble[index];
+                }
+                return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+            })
+            .join('');
+
+        iteration++;
+
+        if (iteration >= maxIterations) {
+            clearInterval(interval);
+            // Restore HTML and original styling
+            if (isHtml) {
+                element.innerHTML = newText;
+            } else {
+                element.textContent = newText;
+            }
+            element.style.color = '';
+            element.style.fontFamily = '';
+        }
+    }, 30);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const lang = e.target.getAttribute('data-lang');
+            if (lang === currentLang) return;
+            
+            currentLang = lang;
+            
+            // Update active styling
+            document.querySelectorAll('.lang-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.color = 'var(--muted-color)';
+            });
+            document.querySelectorAll(`.lang-btn[data-lang="${lang}"]`).forEach(b => {
+                b.classList.add('active');
+                b.style.color = 'var(--accent-color)';
+            });
+
+            // Scramble animation for all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    scrambleText(el, translations[lang][key]);
+                }
+            });
+
+            // Instantly translate placeholders
+            document.querySelectorAll('[data-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-placeholder');
+                if (translations[lang][key]) {
+                    el.setAttribute('placeholder', translations[lang][key]);
+                }
+            });
+        });
+    });
+});

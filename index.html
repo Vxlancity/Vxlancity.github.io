@@ -78,13 +78,18 @@
         <div class="nav-content">
             <div class="logo">Vxlancity</div>
             <ul class="nav-links">
-                <li><a href="#hero">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#hero" data-translate="nav.home">Home</a></li>
+                <li><a href="#about" data-translate="nav.about">About</a></li>
+                <li><a href="#projects" data-translate="nav.projects">Projects</a></li>
+                <li><a href="#contact" data-translate="nav.contact">Contact</a></li>
             </ul>
-            <div class="nav-cta">
-                <a href="#contact" class="btn-primary">Hire Me</a>
+            <div class="nav-cta" style="display: flex; align-items: center; gap: 20px;">
+                <div class="lang-toggle" style="font-family: monospace; font-size: 0.9rem; cursor: pointer; display: flex; gap: 5px;">
+                    <span class="lang-btn active" data-lang="en" style="color: var(--accent-color);">EN</span>
+                    <span style="color: var(--muted-color);">/</span>
+                    <span class="lang-btn" data-lang="de" style="color: var(--muted-color); transition: 0.3s;">DE</span>
+                </div>
+                <a href="#contact" class="btn-primary" data-translate="nav.hireMe">Hire Me</a>
             </div>
         </div>
     </nav>
@@ -94,11 +99,10 @@
         <section id="hero">
             <div class="hero-container">
                 <div class="hero-content">
-                    <h1 class="reveal-text water-text" id="hero-title" data-text="Vxlancity Dev">Vxlancity Dev</h1>
-                    <div class="availability-badge">
-                        <span class="pulse-dot"></span>
-                        Available for Custom Websites & Freelance
+                    <div style="display: block; width: 100%;">
+                        <h1 class="reveal-text water-text" id="hero-title" data-text="Vxlancity Dev">Vxlancity Dev</h1>
                     </div>
+                    <div id="badge-container" style="min-height: 40px; margin-bottom: 30px; display: flex; justify-content: center; align-items: center;"></div>
                     <div class="typing-container">
                         <span class="typing-text"></span>
                     </div>
@@ -163,22 +167,22 @@
             <div class="about-grid">
                 <div class="about-left">
                     <div class="section-header" style="margin-bottom: 30px;">
-                        <h2 class="section-title">About Me & Services</h2>
+                        <h2 class="section-title" data-translate="about.title">About Me & Services</h2>
                         <div class="title-line"></div>
                     </div>
                     <div class="about-text">
-                        <p class="reveal-text">I'm a passionate developer focused on building high-performance,
+                        <p class="reveal-text" data-translate="about.p1">I'm a passionate developer focused on building high-performance,
                             aesthetically pleasing digital experiences. With expertise in full-stack development and a
                             keen eye for modern design trends, I transform complex ideas into elegant solutions.</p>
                     </div> <br>
                     <div class="services-highlight" style="background: rgba(227, 27, 35, 0.05); border: 1px solid rgba(227, 27, 35, 0.2); padding: 20px; border-radius: 12px; margin-top: 15px;">
-                        <h3 style="color: var(--accent-color); margin-bottom: 10px; font-size: 1.2rem;">🚀 Custom Websites on Demand</h3>
-                        <p style="font-size: 0.95rem; line-height: 1.5;">Du suchst eine moderne, schnelle und beeindruckende Website? Ich erstelle <strong>komplett individuelle Websites</strong> auf Anfrage – von Portfolios über Landingpages bis hin zu komplexen Web-Apps, maßgeschneidert auf deine Bedürfnisse.</p>
+                        <h3 style="color: var(--accent-color); margin-bottom: 10px; font-size: 1.2rem;" data-translate="about.servicesTitle">🚀 Custom Websites on Demand</h3>
+                        <p style="font-size: 0.95rem; line-height: 1.5;" data-translate="about.servicesDesc">Du suchst eine moderne, schnelle und beeindruckende Website? Ich erstelle <strong>komplett individuelle Websites</strong> auf Anfrage – von Portfolios über Landingpages bis hin zu komplexen Web-Apps, maßgeschneidert auf deine Bedürfnisse.</p>
                     </div>
                 </div>
             </div>
             <div class="tech-stack">
-                <h3>TECH STACK</h3>
+                <h3 data-translate="about.techStack">TECH STACK</h3>
                 <div class="tech-icons">
                     <div class="tech-card">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -266,7 +270,7 @@
         <!-- Projects Section -->
         <section id="projects" class="container">
             <div class="section-header">
-                <h2 class="section-title">My Work</h2>
+                <h2 class="section-title" data-translate="projects.title">My Work</h2>
                 <div class="title-line"></div>
             </div>
             <div class="project-grid">
@@ -314,27 +318,32 @@
         <!-- Contact Section -->
         <section id="contact" class="container">
             <div class="contact-box">
-                <h2>Ready for your <span class="accent">Custom Website</span>?</h2>
-                <p style="margin-bottom: 25px; opacity: 0.8;">Hast du eine Idee für eine Website oder möchtest du ein komplett eigenes Projekt in Auftrag geben? Schreib mir einfach!</p>
+                <h2 data-translate="contact.title">Ready for your <span class="accent">Custom Website</span>?</h2>
+                <p style="margin-bottom: 25px; opacity: 0.8;" data-translate="contact.desc">Hast du eine Idee für eine Website oder möchtest du ein komplett eigenes Projekt in Auftrag geben? Schreib mir einfach!</p>
                 <form id="contact-form">
                     <div class="form-group">
-                        <input type="text" placeholder="Name" required>
+                        <input type="text" placeholder="Name" required data-placeholder="contact.name">
                     </div>
                     <div class="form-group">
-                        <input type="email" placeholder="Email" required>
+                        <input type="email" placeholder="Email" required data-placeholder="contact.email">
                     </div>
                     <div class="form-group">
-                        <textarea placeholder="Message" rows="5" required></textarea>
+                        <textarea placeholder="Message" rows="5" required data-placeholder="contact.message"></textarea>
                     </div>
-                    <button type="submit" class="btn-primary">Send Message</button>
+                    <button type="submit" class="btn-primary" data-translate="contact.send">Send Message</button>
                 </form>
             </div>
         </section>
     </main>
 
     <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 Vxlancity DEV. All rights reserved.</p>
+        <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <p data-translate="footer.rights">&copy; 2026 Vxlancity DEV. All rights reserved.</p>
+            <div class="lang-toggle footer-lang" style="font-family: monospace; font-size: 0.9rem; cursor: pointer; display: flex; gap: 5px;">
+                <span class="lang-btn active" data-lang="en" style="color: var(--accent-color);">EN</span>
+                <span style="color: var(--muted-color);">/</span>
+                <span class="lang-btn" data-lang="de" style="color: var(--muted-color); transition: 0.3s;">DE</span>
+            </div>
             <div class="socials" id="footer-social-container">
             </div>
         </div>

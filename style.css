@@ -172,7 +172,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1001;
+    z-index: 10000;
     background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(227, 27, 35, 0.2);
@@ -308,15 +308,16 @@ body {
     height: var(--nav-height);
     display: flex;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
     transition: var(--transition);
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(12px);
 }
 
 #navbar.scrolled {
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--card-border);
+    background: rgba(10, 10, 10, 0.95);
+    border-bottom: 1px solid rgba(227, 27, 35, 0.2);
 }
 
 .nav-content {
@@ -378,14 +379,27 @@ body {
     justify-content: center;
     text-align: center;
     position: relative;
+    padding-top: 100px; /* Push content down so it doesn't overlap header */
+}
+
+/* Language Switcher */
+.lang-btn {
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .hero-content h1 {
     font-size: clamp(3rem, 10vw, 6rem);
     font-weight: 800;
     margin-bottom: 20px;
-    line-height: 1.1;
+    line-height: 1.2;
+    padding-bottom: 15px; /* Prevent clipping of 'y' and 'g' */
     position: relative;
+    display: block; /* Ensure it takes full width so badge is below */
 }
 
 .availability-badge {
@@ -402,6 +416,16 @@ body {
     margin-bottom: 30px;
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
+    font-family: monospace; /* Code design */
+    white-space: nowrap;
+    
+    /* Reveal animation (looks like typing / generating) */
+    clip-path: inset(0 100% 0 0);
+    animation: generate-badge 1.5s steps(40) forwards 1s;
+}
+
+@keyframes generate-badge {
+    to { clip-path: inset(0 0 0 0); }
 }
 
 .availability-badge:hover {

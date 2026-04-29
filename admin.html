@@ -129,6 +129,11 @@
                 <input type="range" id="site-progress" min="0" max="100" value="60" style="width: 100%; accent-color: var(--accent-color);" oninput="document.getElementById('progress-display').textContent = this.value + '%'">
             </div>
 
+            <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="has-nitro" style="width: 20px; height: 20px; accent-color: var(--accent-color);">
+                <label for="has-nitro" style="margin: 0; cursor: pointer;">Show Discord Nitro Badge</label>
+            </div>
+
             <button class="btn-primary" onclick="saveConfig()">Save All Configs to Cloud</button>
         </div>
 
@@ -222,6 +227,7 @@
                 document.getElementById('hero-title').value = config.hero_title || '';
                 document.getElementById('site-progress').value = config.site_progress || '60';
                 document.getElementById('progress-display').textContent = (config.site_progress || '60') + '%';
+                document.getElementById('has-nitro').checked = config.has_nitro === 'true';
             }
         }
 
@@ -232,7 +238,8 @@
                 { key: 'terminal_socials', value: document.getElementById('terminal-socials').value },
                 { key: 'footer_socials', value: document.getElementById('footer-socials').value },
                 { key: 'hero_title', value: document.getElementById('hero-title').value },
-                { key: 'site_progress', value: document.getElementById('site-progress').value }
+                { key: 'site_progress', value: document.getElementById('site-progress').value },
+                { key: 'has_nitro', value: document.getElementById('has-nitro').checked ? 'true' : 'false' }
             ];
 
             const { error } = await supabaseClient.from('site_config').upsert(configs);
@@ -244,9 +251,16 @@
             const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
             const list = document.getElementById('project-list');
             if (data) {
-                list.innerHTML = data.map(p => `
+                window.currentProjects = data;
+                list.innerHTML = data.map((p, index) => `
                     <div class="project-item">
-                        <span>${p.title}</span>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <button onclick="moveProject(${index}, -1)" style="background: none; border: none; cursor: ${index === 0 ? 'default' : 'pointer'}; color: white; opacity: ${index === 0 ? '0.2' : '0.8'};" ${index === 0 ? 'disabled' : ''}>▲</button>
+                                <button onclick="moveProject(${index}, 1)" style="background: none; border: none; cursor: ${index === data.length - 1 ? 'default' : 'pointer'}; color: white; opacity: ${index === data.length - 1 ? '0.2' : '0.8'};" ${index === data.length - 1 ? 'disabled' : ''}>▼</button>
+                            </div>
+                            <span style="font-weight: 600;">${p.title}</span>
+                        </div>
                         <div>
                             <button class="btn-primary" style="padding: 5px 10px; margin-right: 10px; background: transparent; border: 1px solid var(--accent-color);" onclick="editProject(${p.id})">Edit</button>
                             <button class="delete-btn" onclick="deleteProject(${p.id})">Delete</button>
@@ -254,6 +268,24 @@
                     </div>
                 `).join('');
             }
+        }
+
+        async function moveProject(index, direction) {
+            const projects = window.currentProjects;
+            const p1 = projects[index];
+            const p2 = projects[index + direction];
+            
+            if (!p1 || !p2) return;
+
+            // Swap their created_at values to change their order
+            const tempTime = p1.created_at;
+            const { error: e1 } = await supabaseClient.from('projects').update({ created_at: p2.created_at }).eq('id', p1.id);
+            const { error: e2 } = await supabaseClient.from('projects').update({ created_at: tempTime }).eq('id', p2.id);
+
+            if (e1 || e2) {
+                alert('Error reordering projects.');
+            }
+            renderProjects();
         }
 
         async function addProject(e) {
