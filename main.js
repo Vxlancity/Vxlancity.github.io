@@ -3,6 +3,50 @@ const SUPABASE_URL = 'https://iutdotykpgrdhgvqtnjx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1dGRvdHlrcGdyZGhndnF0bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MDM1NzAsImV4cCI6MjA5Mjk3OTU3MH0.q2zkK2ob_ohmG_o7o4q2r2_DbgLgWivTZ6Z-UVXoEJg';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Code Rain Background
+(function initCodeRain() {
+    const canvas = document.getElementById('code-rain');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const chars = '{}[]()<>=/;:const let var function return async await import export class new this =>+-*&|!?.0123456789abcdef';
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+
+    // Randomize starting positions
+    for (let i = 0; i < drops.length; i++) {
+        drops[i] = Math.random() * canvas.height / fontSize;
+    }
+
+    function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#E31B23';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const char = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i] += 0.5;
+        }
+    }
+
+    setInterval(draw, 50);
+})();
+
 // Admin Shortcut (Alt + A)
 window.addEventListener('keydown', (e) => {
     if (e.altKey && e.key.toLowerCase() === 'a') {
@@ -26,10 +70,10 @@ async function checkMaintenance() {
                 </div>
             `;
         }
-    } catch (e) { 
+    } catch (e) {
         // Fallback to local
         if (localStorage.getItem('maintenance') === 'true' && !window.location.href.includes('admin.html')) {
-             location.reload(); 
+            location.reload();
         }
     }
 }
@@ -149,7 +193,7 @@ heroTl.from('.reveal-text', {
         ease: 'power3.out'
     }, '-=1');
 
-// Apple Style Scroll Animation
+// Apple Style Cinematic Scroll Animation
 const appleRevealTl = gsap.timeline({
     scrollTrigger: {
         trigger: '#apple-reveal',
@@ -160,9 +204,37 @@ const appleRevealTl = gsap.timeline({
 });
 
 appleRevealTl
-    .to('.sticky-title', { opacity: 1, y: 0, duration: 1 })
-    .to('.glow-box', { scale: 10, opacity: 1, duration: 2, borderRadius: '0%' }, '+=1')
-    .to('.sticky-title', { opacity: 0, y: -50, duration: 1 }, '-=1');
+    // Phase 1: Rings fade in slowly
+    .to('.reveal-ring', { opacity: 1, duration: 1, stagger: 0.3 })
+    // Phase 2: Glow point appears
+    .to('.glow-box', { scale: 1, opacity: 1, duration: 1 }, '-=0.5')
+    // Phase 3: VXLANCITY rises in slowly
+    .to('.sticky-title.t1', { opacity: 1, y: 0, duration: 2.5, ease: 'power2.out' })
+    // Start gradient animation
+    .set('.sticky-title.t1', { animationPlayState: 'running' })
+    // Phase 4: Particles drift in
+    .to('.reveal-particle', { opacity: 0.8, duration: 1, stagger: 0.15 }, '-=1')
+    // Phase 5: Accent line stretches
+    .to('.reveal-line', { width: '60%', opacity: 1, duration: 1.2 }, '-=0.5')
+    // Hold - let everything breathe
+    .to({}, { duration: 2.5 })
+    // Phase 6: Rings expand outward
+    .to('.reveal-ring:nth-child(1)', { width: 600, height: 600, opacity: 0, duration: 1.5 }, '+=0.5')
+    .to('.reveal-ring:nth-child(2)', { width: 800, height: 800, opacity: 0, duration: 1.5 }, '-=1')
+    .to('.reveal-ring:nth-child(3)', { width: 1000, height: 1000, opacity: 0, duration: 1.5 }, '-=1')
+    // Phase 7: Title fades, particles scatter
+    .to('.sticky-title.t1', { opacity: 0, scale: 1.1, duration: 1.2 }, '-=0.8')
+    .to('.reveal-particle', { opacity: 0, scale: 3, duration: 0.8, stagger: 0.08 }, '-=0.8')
+    .to('.reveal-line', { width: '0%', opacity: 0, duration: 0.8 }, '-=0.8')
+    // Phase 8: Glow expands
+    .to('.glow-box', { scale: 200, opacity: 0.8, duration: 2 }, '-=0.5')
+    // Phase 9: Innovation text appears
+    .to('.sticky-title.t2', { opacity: 1, y: 0, duration: 2, ease: 'power2.out' }, '-=1.5')
+    // Hold
+    .to({}, { duration: 2 })
+    // Phase 10: Fade out
+    .to('.sticky-title.t2', { opacity: 0, y: -30, duration: 1.5 })
+    .to('.glow-box', { opacity: 0, duration: 1 }, '-=1');
 
 // Section Reveal Animations
 const sections = document.querySelectorAll('.container');
@@ -228,13 +300,13 @@ async function loadProjects() {
 
     try {
         const { data: projects, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
-        
+
         const displayProjects = (projects && projects.length > 0) ? projects : JSON.parse(localStorage.getItem('projects') || '[]');
 
         if (displayProjects.length > 0) {
             projectGrid.innerHTML = displayProjects.map(p => {
                 const linksArray = p.links || [];
-                const linksHTML = linksArray.length > 0 ? '<div class="project-links">' + linksArray.map(link => 
+                const linksHTML = linksArray.length > 0 ? '<div class="project-links">' + linksArray.map(link =>
                     `<a href="${link}" class="project-link" target="_blank">${getLinkIconHTML(link)}</a>`
                 ).join('') + '</div>' : '';
 
@@ -266,7 +338,22 @@ async function loadConfig() {
         const { data, error } = await supabaseClient.from('site_config').select('*');
         if (data) {
             const config = Object.fromEntries(data.map(c => [c.key, c.value]));
-            
+
+            // Hero Title from DB
+            const heroTitle = document.getElementById('hero-title');
+            if (config.hero_title && heroTitle) {
+                heroTitle.textContent = config.hero_title;
+                heroTitle.setAttribute('data-text', config.hero_title);
+            }
+
+            // Site Progress from DB
+            if (config.site_progress) {
+                const fill = document.querySelector('.dev-progress-fill');
+                const pct = document.querySelector('.dev-progress-pct');
+                if (fill) fill.style.width = config.site_progress + '%';
+                if (pct) pct.textContent = config.site_progress + '%';
+            }
+
             // Discord
             if (config.discord_id) {
                 localStorage.setItem('discord-userid', config.discord_id);
@@ -283,6 +370,11 @@ async function loadConfig() {
             if (config.footer_socials && footerSocialContainer) {
                 const links = config.footer_socials.split(',').map(s => s.trim());
                 footerSocialContainer.innerHTML = links.map(link => `<a href="${link}" target="_blank" class="project-link">${getLinkIconHTML(link)}</a>`).join('');
+            }
+
+            // Webhook URL
+            if (config.webhook) {
+                localStorage.setItem('webhook', config.webhook);
             }
         }
     } catch (e) { console.error("Cloud config failed", e); }
@@ -411,11 +503,33 @@ const contactForm = document.getElementById('contact-form');
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const webhook = localStorage.getItem('webhook');
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+
+        // Try Supabase config first, then localStorage
+        let webhook = localStorage.getItem('webhook');
+
         if (!webhook) {
-            alert('Formular gesendet! (Tipp: Im Admin-Bereich kann eine Discord Webhook hinterlegt werden)');
+            // Try loading from Supabase directly
+            try {
+                const { data } = await supabaseClient.from('site_config').select('value').eq('key', 'webhook').single();
+                if (data && data.value) {
+                    webhook = data.value;
+                    localStorage.setItem('webhook', webhook);
+                }
+            } catch (err) {
+                console.warn('Could not fetch webhook from DB:', err);
+            }
+        }
+
+        if (!webhook) {
+            alert('Kein Webhook konfiguriert. Bitte im Admin-Bereich eine Discord Webhook-URL hinterlegen.');
             return;
         }
+
+        // Show loading state
+        submitBtn.textContent = 'Wird gesendet...';
+        submitBtn.disabled = true;
 
         const formData = {
             name: contactForm.querySelector('input[type="text"]').value,
@@ -429,57 +543,87 @@ if (contactForm) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     embeds: [{
-                        title: 'New Contact Form Submission',
+                        title: '📩 Neue Kontaktanfrage',
                         color: 0xE31B23,
                         fields: [
-                            { name: 'Name', value: formData.name },
-                            { name: 'Email', value: formData.email },
-                            { name: 'Message', value: formData.message }
+                            { name: '👤 Name', value: formData.name, inline: true },
+                            { name: '📧 Email', value: formData.email, inline: true },
+                            { name: '💬 Nachricht', value: formData.message }
                         ],
-                        footer: { text: 'Vxlancity Portfolio' }
+                        footer: { text: 'Vxlancity Portfolio' },
+                        timestamp: new Date().toISOString()
                     }]
                 })
             });
 
-            if (response.ok) {
-                alert('Nachricht erfolgreich gesendet!');
+            if (response.ok || response.status === 204) {
+                submitBtn.textContent = '✓ Gesendet!';
+                submitBtn.style.background = '#27c93f';
                 contactForm.reset();
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.style.background = '';
+                    submitBtn.disabled = false;
+                }, 3000);
             } else {
-                alert('Fehler beim Senden.');
+                const errorText = await response.text();
+                console.error('Webhook response:', response.status, errorText);
+                submitBtn.textContent = '✗ Fehler';
+                submitBtn.style.background = '#e31b23';
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.style.background = '';
+                    submitBtn.disabled = false;
+                }, 3000);
             }
         } catch (error) {
-            console.error('Error sending to Discord:', error);
-            alert('Fehler beim Senden an Discord.');
+            console.error('Webhook fetch error:', error);
+            submitBtn.textContent = '✗ Verbindungsfehler';
+            submitBtn.style.background = '#e31b23';
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.style.background = '';
+                submitBtn.disabled = false;
+            }, 3000);
         }
     });
 }
 
 
 
-// Magnetic effect on tech cards (Bonus)
-document.querySelectorAll('.tech-card').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
+// Magnetic effect on elements
+function setupMagneticEffect(selector, strength = 0.3) {
+    document.querySelectorAll(selector).forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
 
-        gsap.to(card, {
-            x: x * 0.3,
-            y: y * 0.3,
-            duration: 0.3,
-            ease: 'power2.out'
+            gsap.to(el, {
+                x: x * strength,
+                y: y * strength,
+                duration: 0.3,
+                ease: 'power2.out'
+            });
+        });
+
+        el.addEventListener('mouseleave', () => {
+            gsap.to(el, {
+                x: 0,
+                y: 0,
+                duration: 0.5,
+                ease: 'elastic.out(1, 0.3)'
+            });
         });
     });
+}
 
-    card.addEventListener('mouseleave', () => {
-        gsap.to(card, {
-            x: 0,
-            y: 0,
-            duration: 0.5,
-            ease: 'elastic.out(1, 0.3)'
-        });
-    });
-});
+// Apply magnetic effects
+setupMagneticEffect('.tech-card', 0.3);
+setupMagneticEffect('.btn-primary', 0.2);
+setupMagneticEffect('.nav-links a', 0.4);
+setupMagneticEffect('.terminal-social', 0.5);
+setupMagneticEffect('.socials a', 0.4);
 
 // Typing Effect
 const phrases = ["Full stack dev", "Building digital experiences", "Nothing to do", "Solving complex problems"];
