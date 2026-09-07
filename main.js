@@ -1,6 +1,6 @@
 // Supabase Configuration
 const SUPABASE_URL = 'https://iutdotykpgrdhgvqtnjx.supabase.co';
-const SUPABASE_KEY = '';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1dGRvdHlrcGdyZGhndnF0bmp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MDM1NzAsImV4cCI6MjA5Mjk3OTU3MH0.q2zkK2ob_ohmG_o7o4q2r2_DbgLgWivTZ6Z-UVXoEJg';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Code Rain Background
